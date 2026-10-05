@@ -46,9 +46,9 @@ struct LearnView: View {
             .padding(.bottom, 20)
 
             switch section {
-            case .coach: coachSection
-            case .education: educationSection
-            case .stockSim: StockSimSection(simStarting: $simStarting)
+                case .coach: coachSection
+                case .education: educationSection
+                case .stockSim: StockSimSection(simStarting: $simStarting)
             }
         } footer: {
             BottomNav(active: .learn)
