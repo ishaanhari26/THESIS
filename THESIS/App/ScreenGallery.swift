@@ -2,7 +2,7 @@ import SwiftUI
 
 /// DEV ONLY — not app navigation. A list of every screen so you can click through the
 /// port on a device or simulator. Screens open as sheets (swipe down or tap the back
-/// chevron to close). Delete this file once real routing exists.
+/// chevron to close). The real app now starts at AppRootView (App/Navigation).
 ///
 /// Use it by setting your ContentView's body to `ScreenGallery()`.
 struct ScreenGallery: View {

@@ -197,16 +197,19 @@ enum AppTab: String, CaseIterable {
     }
 }
 
-/// Visual-only tab bar matching the prototype. Later you can keep this as a custom
-/// tab bar or swap it for TabView.
+/// Custom tab bar matching the prototype. Taps go to the `AppRouter` from the
+/// environment; outside `AppRootView` (previews, ScreenGallery) there is none and
+/// the buttons do nothing.
 struct BottomNav: View {
     let active: AppTab
+
+    @Environment(AppRouter.self) private var router: AppRouter?
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(AppTab.allCases, id: \.self) { tab in
                 let isActive = tab == active
-                Button {} label: {
+                Button { router?.select(tab) } label: {
                     VStack(spacing: 3) {
                         Icon(tab.icon, size: 21, weight: isActive ? .semibold : .regular)
                         Text(tab.rawValue)
@@ -224,6 +227,7 @@ struct BottomNav: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityAddTraits(isActive ? .isSelected : [])
             }
         }
         .background(Theme.paper.opacity(0.96).ignoresSafeArea(edges: .bottom))
