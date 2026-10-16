@@ -664,8 +664,10 @@ struct StockRow: View {
     var down = false
     var showsDivider = true
 
+    /// Pushes the stock's detail screen. Does nothing outside a NavigationStack
+    /// (previews, ScreenGallery sheets).
     var body: some View {
-        Button {} label: {
+        NavigationLink(value: Route.stock(ticker: ticker)) {
             HStack(spacing: 10) {
                 TickerIcon(ticker: ticker)
                 VStack(alignment: .leading, spacing: 2) {

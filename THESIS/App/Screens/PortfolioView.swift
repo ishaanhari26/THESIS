@@ -41,11 +41,17 @@ struct PortfolioView: View {
             SectionHeading("Your positions", action: "Sort")
 
             PositionRow(
-                icon: AnyView(StockLogo(size: .small)), name: "NVIDIA", shares: "0.2056 shares", value: "$25.00", change: "+0.04%", isNew: true
-            ) // → stock
-            PositionRow(icon: AnyView(TickerIcon(ticker: "VOO")), name: "Vanguard S&P 500 ETF", shares: "1.24 shares", value: "$653.24", change: "+8.10%")
+                ticker: "NVDA", icon: AnyView(StockLogo(size: .small)), name: "NVIDIA", shares: "0.2056 shares", value: "$25.00", change: "+0.04%",
+                isNew: true
+            )
+            PositionRow(
+                ticker: "VOO", icon: AnyView(TickerIcon(ticker: "VOO")), name: "Vanguard S&P 500 ETF", shares: "1.24 shares", value: "$653.24",
+                change: "+8.10%"
+            )
                 .padding(.top, 4)
-            PositionRow(icon: AnyView(TickerIcon(ticker: "AAPL")), name: "Apple", shares: "1.76 shares", value: "$376.82", change: "+4.28%")
+            PositionRow(
+                ticker: "AAPL", icon: AnyView(TickerIcon(ticker: "AAPL")), name: "Apple", shares: "1.76 shares", value: "$376.82", change: "+4.28%"
+            )
 
             SectionHeading("Saved thesis", action: "View all")
             savedThesis
@@ -136,7 +142,9 @@ private struct MoneyFigure: View {
     }
 }
 
+/// Tapping pushes the holding's stock detail screen.
 private struct PositionRow: View {
+    let ticker: String
     let icon: AnyView
     let name: String
     let shares: String
@@ -145,7 +153,7 @@ private struct PositionRow: View {
     var isNew = false
 
     var body: some View {
-        Button {} label: {
+        NavigationLink(value: Route.stock(ticker: ticker)) {
             HStack(spacing: 10) {
                 icon
                 VStack(alignment: .leading, spacing: 3) {

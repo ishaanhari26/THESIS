@@ -87,17 +87,24 @@ struct DiscoverView: View {
     }
 }
 
-/// NVIDIA logo + name + exchange.
+/// Company logo + name + exchange (NVIDIA unless told otherwise).
 struct CompanyLockup: View {
+    var stock: StockQuote = sampleStock("NVDA")
     var largeTitle = false
 
     var body: some View {
         HStack(spacing: 11) {
-            StockLogo()
+            if stock.ticker == "NVDA" {
+                StockLogo()
+            } else {
+                TickerIcon(ticker: stock.ticker, side: 50, radius: 13)
+            }
             VStack(alignment: .leading, spacing: 2) {
-                Text("NVIDIA")
+                Text(stock.name)
                     .font(Theme.display(largeTitle ? 21 : 14))
-                Text("NVDA · NASDAQ")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                Text(stock.exchange.isEmpty ? stock.ticker : "\(stock.ticker) · \(stock.exchange)")
                     .font(Theme.body(10))
                     .foregroundStyle(Theme.muted)
             }
@@ -151,7 +158,11 @@ extension LessonCard where Footer == EmptyView {
 
 // MARK: - Stock detail
 
+/// Header, price and Buy button follow `stock`; the brief, hype check, context and
+/// community sections below are still the prototype's NVIDIA copy.
 struct StockView: View {
+    var stock: StockQuote = sampleStock("NVDA")
+
     @State private var range = "1W"
 
     var body: some View {
@@ -162,7 +173,7 @@ struct StockView: View {
             }
         } content: {
             HStack {
-                CompanyLockup(largeTitle: true)
+                CompanyLockup(stock: stock, largeTitle: true)
                 Spacer()
                 Button {} label: {
                     HStack(spacing: 5) {
@@ -180,13 +191,13 @@ struct StockView: View {
             .padding(.top, 5)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("$121.67").font(Theme.display(30))
+                Text(stock.price).font(Theme.display(30))
                 HStack(spacing: 2) {
-                    Icon(.up, size: 13)
-                    Text("$4.45 (3.80%) today")
+                    Icon(stock.down ? .down : .up, size: 13)
+                    Text("\(stock.changeAmount) (\(stock.change.trimmingCharacters(in: CharacterSet(charactersIn: "+-")))) today")
                 }
                 .font(Theme.body(11))
-                .foregroundStyle(Theme.green2)
+                .foregroundStyle(stock.down ? Theme.red : Theme.green2)
             }
             .padding(.top, 21)
 
@@ -213,7 +224,7 @@ struct StockView: View {
                 HStack(spacing: 10) {
                     SecondaryButton(title: "Sell")
                         .frame(width: 120)
-                    PrimaryButton(title: "Buy NVDA", showsArrow: false) // → coach
+                    PrimaryButton(title: "Buy \(stock.ticker)", showsArrow: false) // → coach
                 }
             }
         }

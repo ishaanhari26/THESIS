@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Environment(AppRouter.self) private var router: AppRouter?
+
     var body: some View {
         ThesisScreen {
             TopBar()
@@ -14,7 +16,7 @@ struct HomeView: View {
             SectionHeading("Your watchlist", action: "View all")
             ListCard {
                 StockRow(ticker: "AAPL", name: "Apple", price: "$214.10", change: "+1.24%")
-                StockRow(ticker: "NVDA", name: "NVIDIA", price: "$121.67", change: "+3.80%") // → stock
+                StockRow(ticker: "NVDA", name: "NVIDIA", price: "$121.67", change: "+3.80%")
                 StockRow(ticker: "TSLA", name: "Tesla", price: "$238.01", change: "-0.62%", down: true, showsDivider: false)
             }
             SectionHeading("Worth understanding", action: "All news")
@@ -45,7 +47,8 @@ struct HomeView: View {
     private var balanceCards: some View {
         HStack(spacing: 10) {
             BalanceCard(
-                title: "Portfolio value", icon: .pie, amount: "$1,259.62", background: Theme.ink, footer: "Invested assets"
+                title: "Portfolio value", icon: .pie, amount: "$1,259.62", background: Theme.ink, footer: "Invested assets",
+                action: { router?.select(.portfolio) }
             ) {
                 HStack(spacing: 2) {
                     Icon(.up, size: 11)
@@ -60,10 +63,11 @@ struct HomeView: View {
                     .frame(height: 35)
                     .padding(.horizontal, -14)
                     .padding(.top, 8)
-            } // → portfolio
+            }
 
             BalanceCard(
-                title: "Money balance", icon: .wallet, amount: "$4,382.71", background: Theme.tealCard, footer: "Money Hub"
+                title: "Money balance", icon: .wallet, amount: "$4,382.71", background: Theme.tealCard, footer: "Money Hub",
+                action: { router?.select(.moneyHub) }
             ) {
                 Text("Across 5 accounts")
                     .font(Theme.body(8))
@@ -83,7 +87,7 @@ struct HomeView: View {
                         .padding(.leading, 14)
                 }
                 .padding(.top, 19)
-            } // → wallet
+            }
         }
     }
 
@@ -164,17 +168,18 @@ struct HomeView: View {
     }
 }
 
-/// One of the two dark summary cards at the top of Home.
+/// One of the two dark summary cards at the top of Home. Tapping it switches tabs.
 private struct BalanceCard<Middle: View>: View {
     let title: String
     let icon: ThesisIcon
     let amount: String
     let background: Color
     let footer: String
+    var action: () -> Void = {}
     @ViewBuilder let middle: Middle
 
     var body: some View {
-        Button {} label: {
+        Button(action: action) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(title).font(Theme.body(9))

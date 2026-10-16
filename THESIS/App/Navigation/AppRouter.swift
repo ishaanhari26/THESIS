@@ -27,6 +27,18 @@ final class AppRouter {
     }
 }
 
+/// Screens that can be pushed onto a tab's navigation stack. Push one with
+/// `NavigationLink(value: Route.…)`; it opens inside whichever tab you're in.
+enum Route: Hashable {
+    case stock(ticker: String)
+
+    @ViewBuilder var destination: some View {
+        switch self {
+        case .stock(let ticker): StockView(stock: sampleStock(ticker))
+        }
+    }
+}
+
 extension AppTab {
     /// The screen each bottom-nav tab opens to.
     @ViewBuilder var rootView: some View {
@@ -53,6 +65,7 @@ struct AppRootView: View {
                 let isSelected = tab == router.selectedTab
                 NavigationStack(path: router.path(for: tab)) {
                     tab.rootView
+                        .navigationDestination(for: Route.self) { $0.destination }
                 }
                 .opacity(isSelected ? 1 : 0)
                 .allowsHitTesting(isSelected)

@@ -165,3 +165,30 @@ struct VideoResultRow: View {
         .buttonStyle(.plain)
     }
 }
+
+/// Prices match the rows on Home, Discover and StockSim. VOO's daily move is made up
+/// (the prototype only shows its all-time return).
+struct StockQuote: Hashable {
+    let ticker: String
+    let name: String
+    let exchange: String
+    let price: String
+    let change: String       // today, e.g. "+3.80%"
+    let changeAmount: String // today, e.g. "$4.45"
+    var down = false
+}
+
+let sampleStocks: [StockQuote] = [
+    .init(ticker: "NVDA", name: "NVIDIA", exchange: "NASDAQ", price: "$121.67", change: "+3.80%", changeAmount: "$4.45"),
+    .init(ticker: "AAPL", name: "Apple", exchange: "NASDAQ", price: "$214.10", change: "+1.24%", changeAmount: "$2.62"),
+    .init(ticker: "TSLA", name: "Tesla", exchange: "NASDAQ", price: "$238.01", change: "-0.62%", changeAmount: "$1.48", down: true),
+    .init(ticker: "PLTR", name: "Palantir", exchange: "NASDAQ", price: "$91.36", change: "+6.12%", changeAmount: "$5.27"),
+    .init(ticker: "AMD", name: "AMD", exchange: "NASDAQ", price: "$112.48", change: "+4.06%", changeAmount: "$4.39"),
+    .init(ticker: "VOO", name: "Vanguard S&P 500 ETF", exchange: "NYSE Arca", price: "$526.81", change: "+0.42%", changeAmount: "$2.20"),
+]
+
+/// Looks up a ticker in `sampleStocks`; unknown tickers get a placeholder quote.
+func sampleStock(_ ticker: String) -> StockQuote {
+    sampleStocks.first { $0.ticker == ticker }
+        ?? StockQuote(ticker: ticker, name: ticker, exchange: "", price: "—", change: "—", changeAmount: "—")
+}
